@@ -4,8 +4,9 @@ namespace Hardywen\SSOClient;
 
 
 use Carbon\Carbon;
-use Hardywen\SSOClient\Middleware\SSOAuthenticate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
 
 class SSOServiceProvider extends ServiceProvider
@@ -13,13 +14,7 @@ class SSOServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $config = realpath(__DIR__ . '/../config/sso.php');
-
-        $this->mergeConfigFrom($config, 'sso');
-
-        $this->publishes([
-            $config => config_path('sso.php')
-        ]);
+        $this->package('hardywen/sso-client');
     }
 
     /**
@@ -33,13 +28,15 @@ class SSOServiceProvider extends ServiceProvider
 
         $router = $this->app['router'];
 
-        $router->get('sso/login', function () use ($request) {
+        $config = $this->app->config->get('sso-client::config');
+
+        $router->get('sso/login', function () use ($request,$config) {
 
             $sign = $request->get('sign');
             $time = $request->get('time');
             $ssoToken = $request->get('sso_token');
 
-            $encryptKey = config('sso.sso_token_encrypt_key');
+            $encryptKey = $config['sso_token_encrypt_key'];
 
             if ($sign && $time && $ssoToken) {
                 if ($sign == md5($encryptKey . $time . $ssoToken)) {
@@ -60,10 +57,19 @@ class SSOServiceProvider extends ServiceProvider
         $router->get('sso/clear', function () {
             Auth::logout();
 
-            return response('', 204);
+            return Response::make('', 204);
         });
 
-        $router->middleware('auth', SSOAuthenticate::class);
+        $router->filter('auth', function() use ($request,$config){
+            if (Auth::guest()) {
+
+                if ($request->ajax()) {
+                    return Response::make('Unauthorized.', 401);
+                } else {
+                    return Redirect::guest($config['sso.sso_login_url'] . '?redirect_url=' . urlencode(url('sso/login')));
+                }
+            }
+        });
     }
 
     /**
@@ -73,8 +79,19 @@ class SSOServiceProvider extends ServiceProvider
      */
     public function createModel()
     {
-        $class = '\\' . ltrim($this->app['config']['auth.model'], '\\');
+        $class = '\\' . ltrim($this->app['config']->get('auth.model'), '\\');
 
         return new $class;
+    }
+
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return array('sso-client');
     }
 }
