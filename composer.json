@@ -1,0 +1,21 @@
+{
+    "name": "hardywen/sso-client",
+    "description": "",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "hardywen",
+            "email": "375480616@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "laravel/framework": "5.1.*"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Hardywen\\SSOClient\\": "src"
+        }
+    }
+}
