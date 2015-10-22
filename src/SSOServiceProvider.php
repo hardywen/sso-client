@@ -33,9 +33,9 @@ class SSOServiceProvider extends ServiceProvider
         $router->middleware('auth', SSOAuthenticate::class);
         $router->middleware('cors', CORSResponse::class);
 
-        $router->get('sso/login', ['as'=>'sso.login','uses'=>'Hardywen\SSO\SSOController@login']);
-        $router->get('sso/logout', ['as'=>'sso.logout','uses'=>'Hardywen\SSO\SSOController@logout']);
-        $router->get('sso/clear', ['as'=>'sso.clear','middleware'=>'cors','uses'=>'Hardywen\SSO\SSOController@clear']);
+        $router->get('sso/login', ['as'=>'sso.login','uses'=>'Hardywen\SSOClient\SSOController@login']);
+        $router->get('sso/logout', ['as'=>'sso.logout','uses'=>'Hardywen\SSOClient\SSOController@logout']);
+        $router->get('sso/clear', ['as'=>'sso.clear','middleware'=>'cors','uses'=>'Hardywen\SSOClient\SSOController@clear']);
 
     }
 

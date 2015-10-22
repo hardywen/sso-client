@@ -1,6 +1,6 @@
 <?php
 
-namespace Hardywen\SSO\Middleware;
+namespace Hardywen\SSOClient\Middleware;
 
 
 use Closure;

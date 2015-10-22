@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hardywen
- * Date: 15/10/22
- * Time: 上午11:18
- */
 
-namespace Hardywen\SSO;
+namespace Hardywen\SSOClient;
 
 
 use Carbon\Carbon;
