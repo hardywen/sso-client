@@ -23,19 +23,19 @@ class SSOServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->package('hardywen/sso-client','sso-client',realpath(__DIR__.'/../'));
+        $this->package('hardywen/sso-client', 'sso-client', realpath(__DIR__ . '/../'));
 
 
         $router = $this->app['router'];
         $request = $this->app['request'];
         $config = $this->app['config']->get('sso-client::config');
 
-        $router->get('sso/login',['uses'=> 'Hardywen\SSOClient\SSOController@login']);
-        $router->get('sso/clear',['uses'=> 'Hardywen\SSOClient\SSOController@clear']);
+        $router->get('sso/login', ['as' => 'sso.login', 'uses' => 'Hardywen\SSOClient\SSOController@login']);
+        $router->get('sso/logout', ['as' => 'sso.logout', 'uses' => 'Hardywen\SSOClient\SSOController@logout']);
+        $router->get('sso/clear', ['as' => 'sso.clear', 'uses' => 'Hardywen\SSOClient\SSOController@clear']);
 
-        $router->filter('auth', function() use ($request,$config){
+        $router->filter('auth', function () use ($request, $config) {
             if (Auth::guest()) {
-
                 if ($request->ajax()) {
                     return Response::make('Unauthorized.', 401);
                 } else {
@@ -44,7 +44,6 @@ class SSOServiceProvider extends ServiceProvider
             }
         });
     }
-
 
 
     /**
