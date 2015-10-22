@@ -36,28 +36,31 @@ class SSOController extends Controller
 
                     return Redirect::intended();
                 }
-            }else{
-                return Response::make('sign does no match',500);
+            } else {
+                return Response::make('sign does no match', 500);
             }
 
         }
 
-        return Response::make('sso login error',500);
+        return Response::make('sso login error', 500);
     }
 
-    public function logout(){
+    public function logout()
+    {
         $config = Config::get('sso-client::config');
         $url = $config['sso_logout_url'];
-        return Redirect::to($url.'&redirect_url='. urlencode(url('sso/login')));
+
+        return Redirect::to($url . '&redirect_url=' . urlencode(url('sso/login')));
     }
 
 
     public function clear()
     {
+        if (Auth::check()) {
+            Auth::logout();
+        }
 
-        Auth::logout();
-
-        return Response::make('', 204);
+        return Response::json('cleared');
     }
 
     /**

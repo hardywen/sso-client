@@ -30,10 +30,6 @@ class SSOServiceProvider extends ServiceProvider
         $request = $this->app['request'];
         $config = $this->app['config']->get('sso-client::config');
 
-        $router->get('sso/login', ['as' => 'sso.login', 'uses' => 'Hardywen\SSOClient\SSOController@login']);
-        $router->get('sso/logout', ['as' => 'sso.logout', 'uses' => 'Hardywen\SSOClient\SSOController@logout']);
-        $router->get('sso/clear', ['as' => 'sso.clear', 'uses' => 'Hardywen\SSOClient\SSOController@clear']);
-
         $router->filter('auth', function () use ($request, $config) {
             if (Auth::guest()) {
                 if ($request->ajax()) {
@@ -43,6 +39,26 @@ class SSOServiceProvider extends ServiceProvider
                 }
             }
         });
+
+        $router->filter('cors', function () use ($request) {
+            header("Access-Control-Allow-Origin: " . $request->header('Origin'));
+            header('Access-Control-Allow-Credentials: true');
+
+            if ($request->getMethod() == "OPTIONS") {
+                $headers = [
+                    'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, DELETE',
+                    'Access-Control-Allow-Headers' => 'X-Requested-With, Content-Type, X-Auth-Token, Origin, Authorization'
+                ];
+
+                return Response::make('You are connected to the API', 200, $headers);
+            }
+        });
+
+        $router->get('sso/login', ['as' => 'sso.login', 'uses' => 'Hardywen\SSOClient\SSOController@login']);
+        $router->get('sso/logout', ['as' => 'sso.logout', 'uses' => 'Hardywen\SSOClient\SSOController@logout']);
+        $router->get('sso/clear',
+            ['as' => 'sso.clear', 'before' => 'cors', 'uses' => 'Hardywen\SSOClient\SSOController@clear']);
+
     }
 
 
