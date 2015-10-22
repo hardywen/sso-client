@@ -3,9 +3,8 @@
 namespace Hardywen\SSOClient;
 
 
-use Carbon\Carbon;
+use Hardywen\SSOClient\Middleware\CORSResponse;
 use Hardywen\SSOClient\Middleware\SSOAuthenticate;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class SSOServiceProvider extends ServiceProvider
@@ -29,41 +28,15 @@ class SSOServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $request = $this->app['request'];
-
         $router = $this->app['router'];
 
-        $router->get('sso/login', function () use ($request) {
-
-            $sign = $request->get('sign');
-            $time = $request->get('time');
-            $ssoToken = $request->get('sso_token');
-
-            $encryptKey = config('sso.sso_token_encrypt_key');
-
-            if ($sign && $time && $ssoToken) {
-                if ($sign == md5($encryptKey . $time . $ssoToken)) {
-                    $merchant = $this->createModel();
-
-                    $merchant = $merchant->where('sso_token', $ssoToken)->where('sso_token_created_at', '>=',
-                        Carbon::now()->subMinute())->first();
-
-                    if ($merchant) {
-                        Auth::login($merchant);
-
-                        return redirect()->intended();
-                    }
-                }
-            }
-        });
-
-        $router->get('sso/clear', function () {
-            Auth::logout();
-
-            return response('', 204);
-        });
-
         $router->middleware('auth', SSOAuthenticate::class);
+        $router->middleware('cors', CORSResponse::class);
+
+        $router->get('sso/login', ['as'=>'sso.login','uses'=>'Hardywen\SSO\SSOController@login']);
+        $router->get('sso/logout', ['as'=>'sso.logout','uses'=>'Hardywen\SSO\SSOController@logout']);
+        $router->get('sso/clear', ['as'=>'sso.clear','middleware'=>'cors','uses'=>'Hardywen\SSO\SSOController@clear']);
+
     }
 
     /**
