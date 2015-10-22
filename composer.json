@@ -10,7 +10,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "laravel/framework": "4.2.*"
+        "laravel/framework": "5.1.*"
     },
 
     "autoload": {

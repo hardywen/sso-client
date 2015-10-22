@@ -51,7 +51,7 @@ class SSOController extends Controller
     {
         Auth::logout();
 
-        return response('cleared');
+        return response('');
 
     }
 

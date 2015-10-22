@@ -1,6 +1,12 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: hardywen
+ * Date: 15/10/22
+ * Time: 下午2:24
+ */
 
-namespace Hardywen\SSOClient\Middleware;
+namespace Hardywen\SSO\Middleware;
 
 
 use Closure;
