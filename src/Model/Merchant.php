@@ -39,4 +39,8 @@ class Merchant extends Model implements AuthenticatableContract, CanResetPasswor
     protected $hidden = ['password', 'remember_token'];
 
 
+    public function image()
+    {
+        return $this->belongsTo(Image::class, 'image_id', 'id');
+    }
 }
