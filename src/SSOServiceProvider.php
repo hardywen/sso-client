@@ -16,9 +16,6 @@ class SSOServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom($config, 'sso');
 
-        $this->publishes([
-            $config => config_path('sso.php')
-        ]);
     }
 
     /**
