@@ -9,9 +9,6 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {
-        "laravel/framework": "5.1.*"
-    },
 
     "autoload": {
         "psr-4": {
